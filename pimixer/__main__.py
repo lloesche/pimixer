@@ -6,6 +6,7 @@ from kivy.uix.button import Button
 from kivy.uix.image import Image
 from kivy.animation import Animation
 from kivy.config import Config
+from kivy.clock import Clock
 
 Config.set("graphics", "width", "800")
 Config.set("graphics", "height", "480")
@@ -30,9 +31,9 @@ class AudioMixerApp(App):
         for i in range(5):
             vbox = BoxLayout(orientation="vertical", spacing=10)
 
-            if i < 4:  # Only add icons above the first four sliders
-                icon = Image(source=self.icons[i], size_hint=(1, None), height=128)  # Adjust icon size
-                vbox.add_widget(icon)
+            # if i < 4:  # Only add icons above the first four sliders
+            #    icon = Image(source=self.icons[i], size_hint=(1, None), height=128)  # Adjust icon size
+            #    vbox.add_widget(icon)
 
             slider = Slider(min=0, max=100, value=50, orientation="vertical", size_hint=(1, 1))
             vbox.add_widget(slider)
@@ -46,8 +47,11 @@ class AudioMixerApp(App):
             grid_layout.add_widget(vbox)
 
         main_layout.add_widget(grid_layout)
-
+        Clock.schedule_once(self.force_redraw, 2)
         return main_layout
+
+    def force_redraw(self, dt):
+        self.root.canvas.ask_update()
 
     def create_toggle_mute_callback(self, index):
         def toggle_mute(instance):
