@@ -56,20 +56,21 @@ set_brightness(0)
 
 
 def serial_process(q, stop_event):
-    try:
-        with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=0.1) as ser:
-            while not stop_event.is_set():
-                if not q.empty():
-                    message = q.get_nowait()
-                    ser.write(message.encode())
-                else:
-                    time.sleep(0.01)
-                if ser.in_waiting > 0:
-                    incoming_data = ser.readline().decode("utf-8").strip()
-                    print(f"Received: {incoming_data}")
+    while not stop_event.is_set():
+        try:
+            with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=0.1) as ser:
+                while not stop_event.is_set():
+                    if not q.empty():
+                        message = q.get_nowait()
+                        ser.write(message.encode())
+                    else:
+                        time.sleep(0.01)
+                    if ser.in_waiting > 0:
+                        incoming_data = ser.readline().decode("utf-8").strip()
+                        print(f"Received: {incoming_data}")
 
-    except Exception as e:
-        print(f"Error in serial communication: {e}")
+        except Exception as e:
+            print(f"Error in serial communication: {e}")
 
 
 class AudioMixerApp(App):
